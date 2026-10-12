@@ -17,14 +17,24 @@ def run_web_server():
 threading.Thread(target=run_web_server, daemon=True).start()
 
 TOKEN = os.environ.get("DISCORD_TOKEN")
+APP_ID = 1559310882415054968
 
 class MyClient(discord.Client):
     async def on_ready(self):
-        print(f'Запущен как {self.user}')
-        game = discord.Game(name="moscowsociety бог дискорда")
-        await self.change_presence(status=discord.Status.online, activity=game)
-        print("Статус CS2 успешно установлен!")
+        activity = discord.Activity(
+            type=discord.ActivityType.playing,
+            name="moscowsociety ebawit",
+            application_id=APP_ID,
+            details="Premier Match",
+            state="Competitive",
+            assets={
+                "large_image": "5305709887327249761_120",
+                "large_text": "Counter-Strike 2"
+            }
+        )
+        await self.change_presence(status=discord.Status.online, activity=activity)
 
 client = MyClient()
+
 if TOKEN:
     client.run(TOKEN)
