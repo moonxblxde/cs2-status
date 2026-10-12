@@ -25,8 +25,8 @@ class MyClient(discord.Client):
             type=discord.ActivityType.playing,
             name="moscowsociety ebawit",
             application_id=APP_ID,
-            details="Premier Match",
-            state="Competitive",
+            details="лучший",
+            state="из лучших",
             assets={
                 "large_image": "5305709887327249761_120",
                 "large_text": "Counter-Strike 2"
