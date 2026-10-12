@@ -21,12 +21,10 @@ TOKEN = os.environ.get("DISCORD_TOKEN")
 class MyClient(discord.Client):
     async def on_ready(self):
         print(f'Запущен как {self.user}')
-        game = discord.Game("Counter-Strike 2")
+        game = discord.Game(name="Counter-Strike 2")
         await self.change_presence(status=discord.Status.online, activity=game)
         print("Статус CS2 успешно установлен!")
 
 client = MyClient()
 if TOKEN:
     client.run(TOKEN)
-else:
-    print("Ошибка: DISCORD_TOKEN не найден!")
