@@ -28,7 +28,7 @@ class MyClient(discord.Client):
             details="лучший",
             state="из лучших",
             assets={
-                "large_image": "5305709887327249761_",
+                "large_image": "logo",
                 "large_text": "Counter-Strike 2"
             }
         )
