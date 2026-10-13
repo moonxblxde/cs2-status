@@ -1,54 +1,23 @@
-import asyncio
-import os
-from threading import Thread
-import discord
-from discord.ext import commands
-from flask import Flask
+import os import asyncio import threading from flask import Flask import discord
+app = Flask(name)
+@app.route('/') def home(): return "Bot is alive!", 200
+def run_flask(): port = int(os.environ.get("PORT", 10000)) app.run(host='0.0.0.0', port=port)
+class MyClient(discord.Client): async def on_ready(self): print(f'Зашел как: {self.user}') await self.connect_voice()
+async def connect_voice(self):
+    channel_id = 1342450813741695051
+    channel = self.get_channel(channel_id)
+    if not channel:
+        try:
+            channel = await self.fetch_channel(channel_id)
+        except Exception as e:
+            print(f"Ошибка поиска канала: {e}")
+            return
 
-app = Flask('')
-
-
-@app.route('/')
-def home():
-  return 'OK'
-
-
-def run():
-  app.run(host='0.0.0.0', port=10000)
-
-
-def keep_alive():
-  t = Thread(target=run)
-  t.start()
-
-
-keep_alive()
-
-bot = commands.Bot(command_prefix='!', self_bot=True)
-
-VOICE_CHANNEL_ID = 1342450813741695051
-TOKEN = os.getenv('TOKEN')
-
-
-@bot.event
-async def on_ready():
-  print(f'Зашел как: {bot.user}')
-  await bot.change_presence(status=discord.Status.online, activity=None)
-
-  channel = bot.get_channel(VOICE_CHANNEL_ID)
-  if channel:
-    try:
-      vc = await channel.connect(self_mute=True, self_deaf=True)
-      print(f'Успешно зашел в канал: {channel.name}')
-      while True:
-        await asyncio.sleep(30)
-        if not vc.is_connected():
-          print('Соединение потеряно. Переподключаюсь...')
-          vc = await channel.connect(self_mute=True, self_deaf=True)
-    except Exception as e:
-      print(f'Ошибка: {e}')
-  else:
-    print('Голосовой канал не найден!')
-
-
-bot.run(TOKEN)
+    if channel:
+        try:
+            await channel.connect(self_mute=True, self_deaf=True)
+            print(f"Успешно зашел в канал: {channel.name}")
+        except Exception as e:
+            print(f"Ошибка подключения к голосовому каналу: {e}")
+client = MyClient()
+if name == "main": threading.Thread(target=run_flask, daemon=True).start() token = os.getenv('TOKEN') if token: client.run(token) else: print("ОШИБКА: Переменная TOKEN не найдена!")
