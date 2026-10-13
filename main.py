@@ -21,7 +21,7 @@ async def on_ready():
     print(f"DEBUG: Logged in as {client.user}", flush=True)
     await asyncio.sleep(5)
     
-    channel_id = 1342450813741695051
+    channel_id = 1342451073335693333
     channel = client.get_channel(channel_id)
     if not channel:
         try:
