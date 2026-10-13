@@ -1,4 +1,5 @@
 import asyncio
+import os
 from threading import Thread
 import discord
 from discord.ext import commands
@@ -26,9 +27,7 @@ keep_alive()
 bot = commands.Bot(command_prefix='!', self_bot=True)
 
 VOICE_CHANNEL_ID = 1342450813741695051
-TOKEN = (
-    'MTU1OTYwNTcxMjgwMjQyMjg0Nw.G4pJuY._YGR0EeS8rIiY_Js6v4fuJjOmUVkqjKuWLPgzQ'
-)
+TOKEN = os.getenv('TOKEN')
 
 
 @bot.event
