@@ -1,40 +1,55 @@
-import os
-import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import asyncio
+from threading import Thread
 import discord
+from discord.ext import commands
+from flask import Flask
 
-class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Bot is active!")
+app = Flask('')
 
-def run_web_server():
-    port = int(os.environ.get("PORT", 10000))
-    server = HTTPServer(('0.0.0.0', port), SimpleHTTPRequestHandler)
-    server.serve_forever()
 
-threading.Thread(target=run_web_server, daemon=True).start()
+@app.route('/')
+def home():
+  return 'OK'
 
-TOKEN = os.environ.get("DISCORD_TOKEN")
-APP_ID = 1559310882415054968
 
-class MyClient(discord.Client):
-    async def on_ready(self):
-        activity = discord.Activity(
-            type=discord.ActivityType.playing,
-            name="moscowsociety ebawit",
-            application_id=APP_ID,
-            details="лучший",
-            state="из лучших",
-            assets={
-                "large_image": "logo",
-                "large_text": "Counter-Strike 2"
-            }
-        )
-        await self.change_presence(status=discord.Status.online, activity=activity)
+def run():
+  app.run(host='0.0.0.0', port=10000)
 
-client = MyClient()
 
-if TOKEN:
-    client.run(TOKEN)
+def keep_alive():
+  t = Thread(target=run)
+  t.start()
+
+
+keep_alive()
+
+bot = commands.Bot(command_prefix='!', self_bot=True)
+
+VOICE_CHANNEL_ID = 1342450813741695051
+TOKEN = (
+    'MTU1OTYwNTcxMjgwMjQyMjg0Nw.G4pJuY._YGR0EeS8rIiY_Js6v4fuJjOmUVkqjKuWLPgzQ'
+)
+
+
+@bot.event
+async def on_ready():
+  print(f'Зашел как: {bot.user}')
+  await bot.change_presence(status=discord.Status.online, activity=None)
+
+  channel = bot.get_channel(VOICE_CHANNEL_ID)
+  if channel:
+    try:
+      vc = await channel.connect(self_mute=True, self_deaf=True)
+      print(f'Успешно зашел в канал: {channel.name}')
+      while True:
+        await asyncio.sleep(30)
+        if not vc.is_connected():
+          print('Соединение потеряно. Переподключаюсь...')
+          vc = await channel.connect(self_mute=True, self_deaf=True)
+    except Exception as e:
+      print(f'Ошибка: {e}')
+  else:
+    print('Голосовой канал не найден!')
+
+
+bot.run(TOKEN)
